@@ -19,39 +19,17 @@ if %errorlevel% neq 0 (
     pause
     exit /b 1
 )
-echo  [✓] Node.js found:
+echo  [✓] Node.js:
 node -v
-
-:: ─── Check npm/bun ───
-where bun >nul 2>&1
-if %errorlevel% equ  0 (
-    echo  [✓] Bun found:
-    bun -v
-    set PM=bun
-) else (
-    echo  [i] Bun not found, using npm
-    where npm >nul 2>&1
-    if %errorlevel% neq 0 (
-        echo  [!] npm also not found!
-        pause
-        exit /b 1
-    )
-    echo  [✓] npm found:
-    npm -v
-    set PM=npm
-)
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [1/4] Installing dependencies...
+echo  [1/5] Installing dependencies...
 echo  ─────────────────────────────────────────────────
-if %PM%==bun (
-    bun install
-) else (
-    npm install
-)
+call npm install
 if %errorlevel% neq 0 (
     echo  [!] Failed to install dependencies!
+    echo  [!] Try: npm install --force
     pause
     exit /b 1
 )
@@ -59,41 +37,55 @@ echo  [✓] Dependencies installed
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [2/4] Checking database...
+echo  [2/5] Creating database folder...
 echo  ─────────────────────────────────────────────────
 if not exist "db" mkdir db
+echo  [✓] Folder db/ ready
 
-:: Create .env if not exists
+echo.
+echo  ─────────────────────────────────────────────────
+echo  [3/5] Setting up .env...
+echo  ─────────────────────────────────────────────────
 if not exist ".env" (
-    echo DATABASE_URL=file:./db/custom.db> .env
-    echo SESSION_SECRET=forhan_super_secret_key_change_in_prod_32ch>> .env
+    > .env echo DATABASE_URL=file:./db/custom.db
+    >> .env echo SESSION_SECRET=forhan_super_secret_key_change_in_prod_32ch
     echo  [✓] Created .env
-)
-
-if not exist "db\custom.db" (
-    echo  [i] Creating database...
-    npx prisma db push --skip-generate
-    echo  [✓] Database created
 ) else (
-    echo  [✓] Database exists
+    echo  [✓] .env already exists
 )
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [3/4] Generating Prisma client...
+echo  [4/5] Creating database...
 echo  ─────────────────────────────────────────────────
-npx prisma generate
+call npx prisma db push --accept-data-loss --skip-generate
+if %errorlevel% neq 0 (
+    echo  [!] Database creation failed!
+    echo  [!] Try manually: npx prisma db push
+    echo  [!] Make sure .env has: DATABASE_URL=file:./db/custom.db
+    pause
+    exit /b 1
+)
+echo  [✓] Database created
+
+call npx prisma generate
+if %errorlevel% neq 0 (
+    echo  [!] Prisma generate failed!
+    pause
+    exit /b 1
+)
 echo  [✓] Prisma client ready
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [4/4] Starting Forhan server...
+echo  [5/5] Starting Forhan server...
 echo  ─────────────────────────────────────────────────
 echo.
 echo  ╔══════════════════════════════════════════════╗
-echo  ║   Server: http://localhost:3000              ║
+echo  ║   http://localhost:3000                       ║
 echo  ║   Press Ctrl+C to stop                       ║
 echo  ╚══════════════════════════════════════════════╝
 echo.
 
-npx next dev -p 3000
+call npx next dev -p 3000
+pause
