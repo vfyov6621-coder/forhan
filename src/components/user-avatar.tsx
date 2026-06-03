@@ -13,7 +13,7 @@ const sizeMap = {
   sm: "h-8 w-8 text-xs",
   md: "h-10 w-10 text-sm",
   lg: "h-12 w-12 text-base",
-  xl: "h-20 w-20 text-xl",
+  xl: "h-32 w-32 text-2xl",
 };
 
 export function UserAvatar({
@@ -33,7 +33,7 @@ export function UserAvatar({
 
   return (
     <div
-      className={`relative flex-shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold text-white ${sizeMap[size]} ${className}`}
+      className={`relative flex-shrink-0 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent)]/70 flex items-center justify-center font-bold text-white ${sizeMap[size]} ${className}`}
       style={{ background: "var(--accent)" }}
       onClick={onClick}
       role={onClick ? "button" : undefined}

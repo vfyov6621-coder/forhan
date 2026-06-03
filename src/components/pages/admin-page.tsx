@@ -5,7 +5,7 @@ import { useStore } from "@/store";
 import { t } from "@/lib/translations";
 import {
   Shield, Users, CreditCard, Activity, RefreshCw, Trash2,
-  Crown, UserX, Search, ChevronLeft, ChevronRight, Link as LinkIcon,
+  Crown, Search, ChevronLeft, ChevronRight, Link as LinkIcon,
   Eye, CheckCircle, Clock
 } from "lucide-react";
 
@@ -172,211 +172,184 @@ export function AdminPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-[var(--accent)] flex items-center justify-center">
-            <Shield className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-[var(--fg)]">{t(lang, "admin", "title")}</h1>
-            <p className="text-sm text-[var(--muted)]">@{user?.username}</p>
-          </div>
+      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3">
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => navigate("home")}
+            className="p-1.5 rounded-full hover:bg-[var(--hover)] transition-colors -ml-2"
+          >
+            <svg className="h-5 w-5 text-[var(--fg)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="text-xl font-bold text-[var(--fg)]">{t(lang, "admin", "title")}</h1>
         </div>
-        <button
-          onClick={() => { fetchStats(); fetchUsers(); }}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--hover)] text-[var(--fg)] hover:bg-[var(--border)] transition-colors"
-        >
-          <RefreshCw className="h-4 w-4" />
-          {t(lang, "admin", "refresh")}
-        </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-        <StatCard icon={Users} label={t(lang, "admin", "totalUsers")} value={stats?.totalUsers ?? 0} color="bg-blue-500/20 text-blue-400" />
-        <StatCard icon={Activity} label={t(lang, "admin", "onlineNow")} value={stats?.onlineNow ?? 0} color="bg-green-500/20 text-green-400" pulse />
-        <StatCard icon={Crown} label={t(lang, "admin", "subscribedUsers")} value={stats?.subscribedUsers ?? 0} color="bg-purple-500/20 text-purple-400" />
-        <StatCard icon={Eye} label={t(lang, "admin", "totalPosts")} value={stats?.totalPosts ?? 0} color="bg-cyan-500/20 text-cyan-400" />
-        <StatCard icon={CheckCircle} label={t(lang, "admin", "totalComments")} value={stats?.totalComments ?? 0} color="bg-amber-500/20 text-amber-400" />
-        <StatCard icon={Clock} label={t(lang, "admin", "totalLikes")} value={stats?.totalLikes ?? 0} color="bg-pink-500/20 text-pink-400" />
-      </div>
-
-      {/* Payment Link Section */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="h-5 w-5 text-[var(--accent)]" />
-          <h2 className="text-lg font-bold text-[var(--fg)]">{t(lang, "admin", "paymentSection")}</h2>
+      <div className="divide-y divide-[var(--border)]">
+        {/* Stats Cards */}
+        <div className="p-4">
+          <div className="grid grid-cols-3 gap-2">
+            <StatCard icon={Users} label={t(lang, "admin", "totalUsers")} value={stats?.totalUsers ?? 0} color="text-[var(--accent)]" />
+            <StatCard icon={Activity} label={t(lang, "admin", "onlineNow")} value={stats?.onlineNow ?? 0} color="text-green-400" pulse />
+            <StatCard icon={Crown} label={t(lang, "admin", "subscribedUsers")} value={stats?.subscribedUsers ?? 0} color="text-amber-400" />
+            <StatCard icon={Eye} label={t(lang, "admin", "totalPosts")} value={stats?.totalPosts ?? 0} color="text-cyan-400" />
+            <StatCard icon={CheckCircle} label={t(lang, "admin", "totalComments")} value={stats?.totalComments ?? 0} color="text-blue-400" />
+            <StatCard icon={Clock} label={t(lang, "admin", "totalLikes")} value={stats?.totalLikes ?? 0} color="text-pink-400" />
+          </div>
         </div>
-        <p className="text-sm text-[var(--muted)] mb-3">{t(lang, "admin", "paymentLinkHint")}</p>
-        <div className="flex gap-2">
-          <div className="flex-1 relative">
-            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+
+        {/* Payment Link Section */}
+        <section className="p-4">
+          <h2 className="text-xl font-bold text-[var(--fg)] mb-4">{t(lang, "admin", "paymentSection")}</h2>
+          <p className="text-[15px] text-[var(--muted)] mb-3">{t(lang, "admin", "paymentLinkHint")}</p>
+          <div className="flex gap-2">
+            <div className="flex-1 relative">
+              <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+              <input
+                type="url"
+                value={paymentLink}
+                onChange={(e) => setPaymentLink(e.target.value)}
+                placeholder={t(lang, "admin", "paymentLinkPlaceholder")}
+                className="w-full pl-10 pr-4 py-3 rounded-full bg-[var(--input-bg)] text-[15px] text-[var(--fg)] border border-transparent focus:border-[var(--accent)] focus:outline-none transition-all duration-200"
+              />
+            </div>
+            <button
+              onClick={handleSaveLink}
+              disabled={savingLink}
+              className={`px-5 py-3 rounded-full font-bold text-[15px] transition-all duration-200 ${
+                linkSaved
+                  ? "bg-green-500/20 text-green-400"
+                  : "bg-[var(--accent)] text-white hover:bg-[#1a8cd8]"
+              }`}
+            >
+              {linkSaved ? <CheckCircle className="h-4 w-4" /> : null}
+              {linkSaved ? t(lang, "admin", "linkSaved") : t(lang, "admin", "saveLink")}
+            </button>
+          </div>
+          {paymentLink && (
+            <div className="mt-3 p-3 rounded-xl bg-[var(--hover)] border border-[var(--border)]">
+              <p className="text-[13px] text-[var(--muted)] mb-1">Preview:</p>
+              <a href={paymentLink} target="_blank" rel="noopener" className="text-[15px] text-[var(--accent)] break-all hover:underline">
+                {paymentLink}
+              </a>
+            </div>
+          )}
+        </section>
+
+        {/* Users Database Section */}
+        <section className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-[var(--fg)]">{t(lang, "admin", "usersSection")}</h2>
+            <div className="flex items-center gap-2">
+              <span className="text-[15px] text-[var(--muted)]">{totalUsers} {lang === "ru" ? "пользователей" : "users"}</span>
+              <button
+                onClick={() => { fetchStats(); fetchUsers(); }}
+                className="p-2 rounded-full hover:bg-[var(--hover)] text-[var(--accent)] transition-colors"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="relative mb-4">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[var(--muted)]" />
             <input
-              type="url"
-              value={paymentLink}
-              onChange={(e) => setPaymentLink(e.target.value)}
-              placeholder={t(lang, "admin", "paymentLinkPlaceholder")}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[var(--input-bg)] text-[var(--fg)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-none transition-colors text-sm"
+              type="text"
+              value={searchQ}
+              onChange={(e) => { setSearchQ(e.target.value); setPage(1); }}
+              placeholder={t(lang, "admin", "searchUsers")}
+              className="w-full pl-12 pr-4 py-3 rounded-full bg-[var(--input-bg)] text-[15px] text-[var(--fg)] border border-transparent focus:border-[var(--accent)] focus:outline-none transition-all duration-200"
             />
           </div>
-          <button
-            onClick={handleSaveLink}
-            disabled={savingLink}
-            className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${
-              linkSaved
-                ? "bg-green-500/20 text-green-400"
-                : "bg-[var(--accent)] text-white hover:opacity-90"
-            }`}
-          >
-            {linkSaved ? <CheckCircle className="h-4 w-4" /> : null}
-            {linkSaved ? t(lang, "admin", "linkSaved") : t(lang, "admin", "saveLink")}
-          </button>
-        </div>
-        {paymentLink && (
-          <div className="mt-3 p-3 rounded-lg bg-[var(--hover)] border border-[var(--border)]">
-            <p className="text-xs text-[var(--muted)] mb-1">Preview:</p>
-            <a href={paymentLink} target="_blank" rel="noopener" className="text-sm text-[var(--accent)] break-all hover:underline">
-              {paymentLink}
-            </a>
-          </div>
-        )}
-      </div>
 
-      {/* Users Database Section */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-[var(--accent)]" />
-            <h2 className="text-lg font-bold text-[var(--fg)]">{t(lang, "admin", "usersSection")}</h2>
-            <span className="text-sm text-[var(--muted)]">({totalUsers})</span>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
-          <input
-            type="text"
-            value={searchQ}
-            onChange={(e) => { setSearchQ(e.target.value); setPage(1); }}
-            placeholder={t(lang, "admin", "searchUsers")}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[var(--input-bg)] text-[var(--fg)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-none transition-colors text-sm"
-          />
-        </div>
-
-        {/* Users Table */}
-        {users.length === 0 ? (
-          <p className="text-center text-[var(--muted)] py-8">{t(lang, "admin", "noUsers")}</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[var(--border)] text-left text-[var(--muted)]">
-                  <th className="pb-2 font-medium">{t(lang, "admin", "username")}</th>
-                  <th className="pb-2 font-medium hidden sm:table-cell">{t(lang, "admin", "status")}</th>
-                  <th className="pb-2 font-medium hidden md:table-cell">{t(lang, "admin", "joined")}</th>
-                  <th className="pb-2 font-medium text-right">{t(lang, "admin", "actions")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u) => (
-                  <tr key={u.id} className="border-b border-[var(--border)] hover:bg-[var(--hover)] transition-colors">
-                    <td className="py-3">
-                      <div className="flex items-center gap-2.5">
-                        <button
-                          onClick={() => { navigate("profile", { username: u.username }); }}
-                          className="flex items-center gap-2.5 hover:underline"
-                        >
-                          <div className="h-9 w-9 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                            {u.displayName[0]?.toUpperCase() || "U"}
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-semibold text-[var(--fg)] truncate">{u.displayName}</span>
-                              {u.isAdmin && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">
-                                  {t(lang, "admin", "adminRole")}
-                                </span>
-                              )}
-                              {u.subscribed && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-medium">
-                                  {t(lang, "admin", "subscribed")}
-                                </span>
-                              )}
-                            </div>
-                            <span className="text-xs text-[var(--muted)]">@{u.username}</span>
-                          </div>
-                        </button>
-                      </div>
-                    </td>
-                    <td className="py-3 hidden sm:table-cell">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                        u.subscribed ? "bg-blue-500/20 text-blue-400" : "bg-[var(--hover)] text-[var(--muted)]"
-                      }`}>
-                        {u.subscribed ? t(lang, "admin", "subscribed") : t(lang, "admin", "notSubscribed")}
-                      </span>
-                    </td>
-                    <td className="py-3 text-[var(--muted)] text-xs hidden md:table-cell">
-                      {formatDate(u.createdAt)}
-                    </td>
-                    <td className="py-3">
-                      <div className="flex items-center gap-1 justify-end">
-                        <button
-                          onClick={() => handleToggleSub(u.id)}
-                          className="p-1.5 rounded-lg hover:bg-purple-500/20 text-purple-400 transition-colors"
-                          title={t(lang, "admin", "toggleSub")}
-                        >
-                          <Crown className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleToggleAdmin(u.id)}
-                          className="p-1.5 rounded-lg hover:bg-amber-500/20 text-amber-400 transition-colors"
-                          title={t(lang, "admin", "toggleAdmin")}
-                        >
-                          <Shield className="h-4 w-4" />
-                        </button>
-                        {u.id !== user?.id && (
-                          <button
-                            onClick={() => handleDeleteUser(u.id, u.displayName)}
-                            className="p-1.5 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors"
-                            title={t(lang, "admin", "deleteUser")}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+          {/* Users List */}
+          {users.length === 0 ? (
+            <p className="text-center text-[var(--muted)] py-8 text-[15px]">{t(lang, "admin", "noUsers")}</p>
+          ) : (
+            <div>
+              {users.map((u) => (
+                <div key={u.id} className="flex items-center gap-3 py-3 border-b border-[var(--border)] hover:bg-[var(--hover)] transition-colors px-1">
+                  <button
+                    onClick={() => { navigate("profile", { username: u.username }); }}
+                    className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                  >
+                    <div className="h-10 w-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      {u.displayName[0]?.toUpperCase() || "U"}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-[15px] text-[var(--fg)] truncate">{u.displayName}</span>
+                        {u.isAdmin && (
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">
+                            {t(lang, "admin", "adminRole")}
+                          </span>
+                        )}
+                        {u.subscribed && (
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--accent)]/20 text-[var(--accent)] font-bold">
+                            {t(lang, "admin", "subscribed")}
+                          </span>
                         )}
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                      <span className="text-[13px] text-[var(--muted)]">@{u.username} · {formatDate(u.createdAt)}</span>
+                    </div>
+                  </button>
+                  <div className="flex items-center gap-0.5 flex-shrink-0">
+                    <button
+                      onClick={() => handleToggleSub(u.id)}
+                      className="p-2 rounded-full hover:bg-amber-500/10 text-amber-400 transition-colors"
+                      title={t(lang, "admin", "toggleSub")}
+                    >
+                      <Crown className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleToggleAdmin(u.id)}
+                      className="p-2 rounded-full hover:bg-[var(--accent)]/10 text-[var(--accent)] transition-colors"
+                      title={t(lang, "admin", "toggleAdmin")}
+                    >
+                      <Shield className="h-4 w-4" />
+                    </button>
+                    {u.id !== user?.id && (
+                      <button
+                        onClick={() => handleDeleteUser(u.id, u.displayName)}
+                        className="p-2 rounded-full hover:bg-red-500/10 text-red-400 transition-colors"
+                        title={t(lang, "admin", "deleteUser")}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1}
-              className="p-2 rounded-lg bg-[var(--hover)] text-[var(--fg)] hover:bg-[var(--border)] disabled:opacity-30 transition-colors"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <span className="text-sm text-[var(--muted)]">
-              {page} / {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages}
-              className="p-2 rounded-lg bg-[var(--hover)] text-[var(--fg)] hover:bg-[var(--border)] disabled:opacity-30 transition-colors"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-4 mt-4 py-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className="p-2 rounded-full hover:bg-[var(--hover)] text-[var(--fg)] disabled:opacity-30 transition-colors"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <span className="text-[15px] text-[var(--muted)] font-medium">
+                {page} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                className="p-2 rounded-full hover:bg-[var(--hover)] text-[var(--fg)] disabled:opacity-30 transition-colors"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
@@ -396,16 +369,10 @@ function StatCard({
   pulse?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-      <div className="flex items-center gap-3">
-        <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${color} ${pulse ? "animate-pulse" : ""}`}>
-          <Icon className="h-5 w-5" />
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-[var(--fg)]">{value.toLocaleString()}</p>
-          <p className="text-xs text-[var(--muted)]">{label}</p>
-        </div>
-      </div>
+    <div className="rounded-xl border border-[var(--border)] p-3 text-center hover:bg-[var(--hover)] transition-colors">
+      <Icon className={`h-5 w-5 mx-auto mb-1 ${color} ${pulse ? "animate-pulse" : ""}`} />
+      <p className="text-xl font-bold text-[var(--fg)]">{value.toLocaleString()}</p>
+      <p className="text-[11px] text-[var(--muted)] mt-0.5">{label}</p>
     </div>
   );
 }

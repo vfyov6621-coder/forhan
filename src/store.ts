@@ -75,7 +75,7 @@ export const useStore = create<AppStore>((set) => ({
         user,
         isAuthenticated: true,
         theme: user.theme || "dark",
-        accentColor: user.accentColor || "#8639d2",
+        accentColor: user.accentColor || "#1d9bf0",
         language: user.language || "ru",
       });
     } else {
@@ -86,7 +86,7 @@ export const useStore = create<AppStore>((set) => ({
 
   // Preferences
   theme: "dark",
-  accentColor: "#8639d2",
+  accentColor: "#1d9bf0",
   language: "ru",
   setTheme: (theme) => set({ theme }),
   setAccentColor: (accentColor) => set({ accentColor }),

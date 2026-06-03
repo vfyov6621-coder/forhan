@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useStore } from "@/store";
 import { t } from "@/lib/translations";
-import { Search as SearchIcon, ArrowLeft } from "lucide-react";
+import { Search as SearchIcon } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { SubscribedBadge } from "@/components/subscribed-badge";
 
@@ -44,28 +44,17 @@ export function SearchPage() {
   }, []);
 
   return (
-    <div className="max-w-xl mx-auto border-x border-[var(--border)] min-h-screen">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3 flex items-center gap-3">
-        <button
-          onClick={() => navigate("home")}
-          className="p-1.5 rounded-full hover:bg-[var(--hover)] transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 text-[var(--fg)]" />
-        </button>
-        <h1 className="text-xl font-bold text-[var(--fg)]">{t(lang, "search", "title")}</h1>
-      </div>
-
-      {/* Search Input */}
-      <div className="p-4">
+    <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3">
         <div className="relative">
-          <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--muted)]" />
+          <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[var(--muted)]" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t(lang, "search", "placeholder")}
-            className="w-full pl-12 pr-4 py-3 rounded-full bg-[var(--input-bg)] border border-[var(--border)] text-[var(--fg)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-colors"
+            className="w-full pl-12 pr-4 py-3 rounded-full bg-[var(--input-bg)] border border-transparent text-[15px] text-[var(--fg)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] focus:bg-white dark:focus:bg-black transition-all duration-200"
             autoFocus
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSearch();
@@ -75,30 +64,39 @@ export function SearchPage() {
       </div>
 
       {/* Results */}
-      <div className="px-4">
+      <div>
         {searching ? (
-          <div className="py-8 flex justify-center">
+          <div className="py-12 flex justify-center">
             <div className="h-6 w-6 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : searched && results.length === 0 ? (
-          <div className="py-8 text-center text-[var(--muted)]">
-            {t(lang, "search", "noResults")}
+          <div className="py-12 text-center">
+            <h3 className="text-xl font-bold text-[var(--fg)] mb-2">
+              {lang === "ru" ? "Ничего не найдено" : "No results found"}
+            </h3>
+            <p className="text-[15px] text-[var(--muted)]">{t(lang, "search", "noResults")}</p>
           </div>
         ) : (
           results.map((u) => (
             <button
               key={u.id}
               onClick={() => navigate("profile", { username: u.username })}
-              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--hover)] transition-colors text-left mb-1"
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[var(--hover)] transition-colors text-left border-b border-[var(--border)]"
             >
               <UserAvatar username={u.username} displayName={u.displayName} avatarUrl={u.avatarUrl} size="lg" />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-[var(--fg)] truncate">{u.displayName}</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-bold text-[15px] text-[var(--fg)] truncate">{u.displayName}</span>
                   {u.subscribed && <SubscribedBadge size="sm" />}
                 </div>
-                <span className="text-sm text-[var(--muted)]">@{u.username}</span>
+                <span className="text-[15px] text-[var(--muted)]">@{u.username}</span>
               </div>
+              <button
+                className="px-4 py-1.5 rounded-full bg-[var(--fg)] text-[var(--bg-primary)] font-bold text-[14px] hover:opacity-90 transition-colors flex-shrink-0"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {lang === "ru" ? "Читать" : "Follow"}
+              </button>
             </button>
           ))
         )}

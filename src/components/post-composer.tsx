@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useStore } from "@/store";
 import { t } from "@/lib/translations";
-import { Send } from "lucide-react";
+import { Smile, ImageIcon, ListTodo, CalendarDays } from "lucide-react";
+import { UserAvatar } from "./user-avatar";
 
 interface PostComposerProps {
   onPost?: () => void;
@@ -35,34 +36,50 @@ export function PostComposer({ onPost }: PostComposerProps) {
   if (!user) return null;
 
   return (
-    <div className="border-b border-[var(--border)] p-4">
-      <div className="flex gap-3">
-        <div className="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-          {user.displayName[0]?.toUpperCase() || "?"}
-        </div>
-        <div className="flex-1">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder={t(lang, "composer", "placeholder")}
-            className="w-full bg-transparent text-[15px] text-[var(--fg)] placeholder:text-[var(--muted)] resize-none focus:outline-none min-h-[60px] py-2"
-            rows={2}
-            maxLength={500}
-          />
-          <div className="flex items-center justify-between border-t border-[var(--border)] pt-3 mt-1">
-            <span className="text-xs text-[var(--muted)]">{content.length}/500</span>
-            <button
-              onClick={handlePost}
-              disabled={!content.trim() || posting}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-                content.trim() && !posting
-                  ? "bg-[var(--accent)] text-white hover:opacity-90"
-                  : "bg-[var(--accent)]/30 text-white/50 cursor-not-allowed"
-              }`}
-            >
-              {posting ? "..." : t(lang, "composer", "post")}
+    <div className="flex gap-3 px-4 py-3 border-b border-[var(--border)]">
+      <div className="flex-shrink-0">
+        <UserAvatar username={user.username} displayName={user.displayName} size="md" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder={t(lang, "composer", "placeholder")}
+          className="w-full bg-transparent text-xl text-[var(--fg)] placeholder:text-[var(--muted)] resize-none focus:outline-none min-h-[56px] py-1 leading-6"
+          rows={1}
+          maxLength={500}
+          style={{ wordBreak: "break-word" }}
+        />
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--border)]">
+          {/* Action icons */}
+          <div className="flex items-center gap-1 -ml-2">
+            <button className="p-2 rounded-full text-[var(--accent)] hover:bg-[#1d9bf0]/10 transition-colors">
+              <ImageIcon className="h-5 w-5" />
             </button>
+            <button className="p-2 rounded-full text-[var(--accent)] hover:bg-[#1d9bf0]/10 transition-colors">
+              <Smile className="h-5 w-5" />
+            </button>
+            <button className="p-2 rounded-full text-[var(--accent)] hover:bg-[#1d9bf0]/10 transition-colors">
+              <ListTodo className="h-5 w-5" />
+            </button>
+            <button className="p-2 rounded-full text-[var(--accent)] hover:bg-[#1d9bf0]/10 transition-colors">
+              <CalendarDays className="h-5 w-5" />
+            </button>
+            <span className="text-xs text-[var(--muted)] ml-2">
+              {500 - content.length}
+            </span>
           </div>
+          <button
+            onClick={handlePost}
+            disabled={!content.trim() || posting}
+            className={`px-5 py-2 rounded-full text-[15px] font-bold transition-all duration-200 ${
+              content.trim() && !posting
+                ? "bg-[var(--accent)] text-white hover:bg-[#1a8cd8]"
+                : "bg-[var(--accent)]/50 text-white/50 cursor-not-allowed"
+            }`}
+          >
+            {posting ? "..." : t(lang, "composer", "post")}
+          </button>
         </div>
       </div>
     </div>

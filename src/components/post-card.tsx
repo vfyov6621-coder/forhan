@@ -6,7 +6,7 @@ import { t } from "@/lib/translations";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import { enUS } from "date-fns/locale";
-import { Heart, MessageCircle, Repeat2, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Repeat2, Share, Trash2 } from "lucide-react";
 import { UserAvatar } from "./user-avatar";
 import { SubscribedBadge } from "./subscribed-badge";
 
@@ -86,9 +86,15 @@ export function PostCard({ post, onLike, onComment, onDelete, compact = false }:
   });
 
   return (
-    <article className="border-b border-[var(--border)] p-4 hover:bg-[var(--hover)] transition-colors cursor-pointer">
+    <article className="border-b border-[var(--border)] px-4 py-3 hover:bg-[var(--hover)] transition-colors cursor-pointer">
       <div className="flex gap-3">
-        <div onClick={handleAuthorClick} className="flex-shrink-0">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAuthorClick();
+          }}
+          className="flex-shrink-0"
+        >
           <UserAvatar
             username={post.author.username}
             displayName={post.author.displayName}
@@ -99,76 +105,111 @@ export function PostCard({ post, onLike, onComment, onDelete, compact = false }:
 
         <div className="flex-1 min-w-0">
           {/* Header */}
-          <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <div className="flex items-center gap-1 mb-0.5 flex-wrap">
             <button
-              onClick={handleAuthorClick}
-              className="font-semibold text-sm text-[var(--fg)] hover:underline truncate"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAuthorClick();
+              }}
+              className="font-bold text-[15px] text-[var(--fg)] hover:underline truncate"
             >
               {post.author.displayName}
             </button>
             {post.author.subscribed && <SubscribedBadge size="sm" />}
-            <span className="text-sm text-[var(--muted)] truncate">
+            <span className="text-[15px] text-[var(--muted)] truncate">
               @{post.author.username}
             </span>
-            <span className="text-sm text-[var(--muted)]">·</span>
-            <span className="text-sm text-[var(--muted)] whitespace-nowrap">{timeAgo}</span>
+            <span className="text-[15px] text-[var(--muted)]">·</span>
+            <span className="text-[15px] text-[var(--muted)] whitespace-nowrap hover:underline">{timeAgo}</span>
           </div>
 
           {/* Content */}
           <div
-            className="text-[15px] text-[var(--fg)] whitespace-pre-wrap break-words leading-relaxed mb-2"
+            className="text-[15px] text-[var(--fg)] whitespace-pre-wrap break-words leading-5 mb-3"
             onClick={handlePostClick}
           >
             {post.content}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-6 -ml-2">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleLike();
-              }}
-              className={`flex items-center gap-1.5 p-2 rounded-full transition-colors group ${
-                liked
-                  ? "text-red-500 hover:bg-red-500/10"
-                  : "text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10"
-              }`}
-            >
-              <Heart className="h-4 w-4" fill={liked ? "currentColor" : "none"} />
-              <span className="text-xs">{likeCount > 0 ? likeCount : ""}</span>
-            </button>
-
+          {/* Action Bar - X.com style */}
+          <div className="flex items-center justify-between max-w-[425px] -ml-2">
+            {/* Comment */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handlePostClick();
               }}
-              className="flex items-center gap-1.5 p-2 rounded-full text-[var(--muted)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors"
+              className="flex items-center gap-0 group"
             >
-              <MessageCircle className="h-4 w-4" />
-              <span className="text-xs">
+              <div className="p-2 rounded-full text-[var(--muted)] group-hover:text-[#1d9bf0] group-hover:bg-[#1d9bf0]/10 transition-colors">
+                <MessageCircle className="h-[18px] w-[18px]" />
+              </div>
+              <span className="text-[13px] text-[var(--muted)] group-hover:text-[#1d9bf0] transition-colors">
                 {(post._count?.comments ?? 0) > 0 ? post._count!.comments : ""}
               </span>
             </button>
 
+            {/* Repost */}
             <button
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1.5 p-2 rounded-full text-[var(--muted)] hover:text-green-500 hover:bg-green-500/10 transition-colors"
+              className="flex items-center gap-0 group"
             >
-              <Repeat2 className="h-4 w-4" />
+              <div className="p-2 rounded-full text-[var(--muted)] group-hover:text-[#00ba7c] group-hover:bg-[#00ba7c]/10 transition-colors">
+                <Repeat2 className="h-[18px] w-[18px]" />
+              </div>
+              <span className="text-[13px] text-[var(--muted)] group-hover:text-[#00ba7c] transition-colors">
+                0
+              </span>
             </button>
 
+            {/* Like */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLike();
+              }}
+              className="flex items-center gap-0 group"
+            >
+              <div className={`p-2 rounded-full transition-colors ${
+                liked
+                  ? "text-[#f91880] bg-[#f91880]/10"
+                  : "text-[var(--muted)] group-hover:text-[#f91880] group-hover:bg-[#f91880]/10"
+              }`}>
+                <Heart
+                  className="h-[18px] w-[18px]"
+                  fill={liked ? "currentColor" : "none"}
+                />
+              </div>
+              <span className={`text-[13px] transition-colors ${
+                liked ? "text-[#f91880]" : "text-[var(--muted)] group-hover:text-[#f91880]"
+              }`}>
+                {likeCount > 0 ? likeCount : ""}
+              </span>
+            </button>
+
+            {/* Share */}
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-0 group"
+            >
+              <div className="p-2 rounded-full text-[var(--muted)] group-hover:text-[#1d9bf0] group-hover:bg-[#1d9bf0]/10 transition-colors">
+                <Share className="h-[18px] w-[18px]" />
+              </div>
+            </button>
+
+            {/* Delete (own posts) */}
             {user && user.id === post.author.id && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDelete();
                 }}
-                className="flex items-center gap-1.5 p-2 rounded-full text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                className="flex items-center gap-0 group"
                 disabled={deleting}
               >
-                <Trash2 className="h-4 w-4" />
+                <div className="p-2 rounded-full text-[var(--muted)] group-hover:text-red-500 group-hover:bg-red-500/10 transition-colors">
+                  <Trash2 className="h-[18px] w-[18px]" />
+                </div>
               </button>
             )}
           </div>

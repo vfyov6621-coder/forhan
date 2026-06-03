@@ -16,7 +16,7 @@ model User {
   bio          String?
   subscribed   Boolean  @default(false)
   theme        String   @default("dark")
-  accentColor  String   @default("#8639d2")
+  accentColor  String   @default("#1d9bf0")
   isAdmin      Boolean  @default(false)
   language     String   @default("ru")
   createdAt    DateTime @default(now())

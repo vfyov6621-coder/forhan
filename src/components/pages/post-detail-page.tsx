@@ -6,7 +6,6 @@ import { t } from "@/lib/translations";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import { enUS } from "date-fns/locale";
-import { ArrowLeft } from "lucide-react";
 import { PostCard } from "@/components/post-card";
 import { UserAvatar } from "@/components/user-avatar";
 import { SubscribedBadge } from "@/components/subscribed-badge";
@@ -101,7 +100,7 @@ export function PostDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-xl mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
+      <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
         <div className="h-8 w-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -109,7 +108,7 @@ export function PostDetailPage() {
 
   if (!post) {
     return (
-      <div className="max-w-xl mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
+      <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-[var(--muted)] mb-4">{t(lang, "errors", "notFound")}</p>
           <button onClick={() => navigate("home")} className="text-[var(--accent)] hover:underline">
@@ -121,44 +120,42 @@ export function PostDetailPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto border-x border-[var(--border)] min-h-screen">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3 flex items-center gap-4">
-        <button
-          onClick={() => navigate("home")}
-          className="p-1.5 rounded-full hover:bg-[var(--hover)] transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 text-[var(--fg)]" />
-        </button>
-        <h1 className="text-xl font-bold text-[var(--fg)]">{t(lang, "postDetail", "back")}</h1>
+    <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4">
+        <div className="flex items-center gap-6 h-[53px]">
+          <button
+            onClick={() => navigate("home")}
+            className="p-1.5 rounded-full hover:bg-[var(--hover)] transition-colors -ml-2"
+          >
+            <svg className="h-5 w-5 text-[var(--fg)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="text-xl font-bold text-[var(--fg)]">{lang === "ru" ? "Пост" : "Post"}</h1>
+        </div>
       </div>
 
-      {/* Post */}
+      {/* Full Post Display */}
       <PostCard post={post} />
 
       {/* Comments Section */}
       <div className="border-t border-[var(--border)]">
-        <div className="px-4 py-3 border-b border-[var(--border)]">
-          <h3 className="text-lg font-bold text-[var(--fg)]">
-            {t(lang, "postDetail", "comments")} ({comments.length})
-          </h3>
-        </div>
-
-        {/* New Comment */}
+        {/* New Comment - X.com style reply box */}
         {user && (
-          <div className="flex gap-3 p-4 border-b border-[var(--border)]">
+          <div className="flex gap-3 px-4 py-3 border-b border-[var(--border)]">
             <UserAvatar
               username={user.username}
               displayName={user.displayName}
               size="md"
             />
-            <div className="flex-1 flex gap-2">
+            <div className="flex-1 flex items-start gap-3">
               <input
                 type="text"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder={t(lang, "postDetail", "commentPlaceholder")}
-                className="flex-1 bg-transparent text-[15px] text-[var(--fg)] placeholder:text-[var(--muted)] focus:outline-none"
+                className="flex-1 bg-transparent text-[15px] text-[var(--fg)] placeholder:text-[var(--muted)] focus:outline-none pt-2"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleComment();
                 }}
@@ -166,10 +163,10 @@ export function PostDetailPage() {
               <button
                 onClick={handleComment}
                 disabled={!newComment.trim() || postingComment}
-                className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors ${
+                className={`px-4 py-1.5 rounded-full text-[15px] font-bold mt-1 transition-all duration-200 ${
                   newComment.trim()
-                    ? "bg-[var(--accent)] text-white hover:opacity-90"
-                    : "bg-[var(--accent)]/30 text-white/50 cursor-not-allowed"
+                    ? "bg-[var(--accent)] text-white hover:bg-[#1a8cd8]"
+                    : "bg-[var(--accent)]/50 text-white/50 cursor-not-allowed"
                 }`}
               >
                 {t(lang, "postDetail", "addComment")}
@@ -181,36 +178,41 @@ export function PostDetailPage() {
         {/* Comments List */}
         <div>
           {comments.length === 0 ? (
-            <div className="p-6 text-center text-[var(--muted)] text-sm">
+            <div className="p-8 text-center text-[var(--muted)] text-[15px]">
               {t(lang, "postDetail", "noComments")}
             </div>
           ) : (
             comments.map((comment) => (
-              <div key={comment.id} className="flex gap-3 p-4 border-b border-[var(--border)] hover:bg-[var(--hover)] transition-colors">
-                <UserAvatar
-                  username={comment.author.username}
-                  displayName={comment.author.displayName}
-                  avatarUrl={comment.author.avatarUrl}
-                  size="md"
-                />
+              <div key={comment.id} className="flex gap-3 px-4 py-3 border-b border-[var(--border)] hover:bg-[var(--hover)] transition-colors">
+                <button
+                  onClick={() => navigate("profile", { username: comment.author.username })}
+                  className="flex-shrink-0"
+                >
+                  <UserAvatar
+                    username={comment.author.username}
+                    displayName={comment.author.displayName}
+                    avatarUrl={comment.author.avatarUrl}
+                    size="md"
+                  />
+                </button>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
+                  <div className="flex items-center gap-1 mb-0.5">
                     <button
                       onClick={() => navigate("profile", { username: comment.author.username })}
-                      className="font-semibold text-sm text-[var(--fg)] hover:underline"
+                      className="font-bold text-[15px] text-[var(--fg)] hover:underline"
                     >
                       {comment.author.displayName}
                     </button>
                     {comment.author.subscribed && <SubscribedBadge size="sm" />}
-                    <span className="text-sm text-[var(--muted)]">·</span>
-                    <span className="text-sm text-[var(--muted)]">
+                    <span className="text-[15px] text-[var(--muted)]">·</span>
+                    <span className="text-[15px] text-[var(--muted)] hover:underline">
                       {formatDistanceToNow(new Date(comment.createdAt), {
                         addSuffix: true,
                         locale,
                       })}
                     </span>
                   </div>
-                  <p className="text-[15px] text-[var(--fg)] whitespace-pre-wrap break-words">
+                  <p className="text-[15px] text-[var(--fg)] whitespace-pre-wrap break-words leading-5">
                     {comment.content}
                   </p>
                 </div>

@@ -6,6 +6,7 @@ import { t } from "@/lib/translations";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { enUS } from "date-fns/locale";
+import { CalendarDays, MapPin, Link as LinkIcon } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { SubscribedBadge } from "@/components/subscribed-badge";
 import { PostCard } from "@/components/post-card";
@@ -47,6 +48,7 @@ export function ProfilePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState<"posts" | "replies" | "likes">("posts");
 
   const username = viewParams.username || currentUser?.username || "";
   const isOwnProfile = currentUser?.username === username;
@@ -79,7 +81,7 @@ export function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="max-w-xl mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
+      <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
         <div className="h-8 w-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -87,7 +89,7 @@ export function ProfilePage() {
 
   if (error || !profileUser) {
     return (
-      <div className="max-w-xl mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
+      <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-[var(--muted)] mb-4">{error || t(lang, "errors", "notFound")}</p>
           <button
@@ -102,57 +104,116 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto border-x border-[var(--border)] min-h-screen">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3">
-        <h1 className="text-xl font-bold text-[var(--fg)]">@{profileUser.username}</h1>
+    <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-20 bg-[var(--bg-primary)]/80 backdrop-blur-md">
+        <div className="flex items-center gap-6 px-4 py-1 h-[53px]">
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-[var(--fg)]">{profileUser.displayName}</h2>
+            <p className="text-[13px] text-[var(--muted)]">
+              {posts.length} {t(lang, "profile", "posts").toLowerCase()}
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Banner */}
-      <div className="h-32 sm:h-48 bg-gradient-to-r from-[var(--accent)] to-purple-400 relative" />
+      {/* Banner - X.com style gradient */}
+      <div className="h-48 sm:h-48 bg-gradient-to-br from-[var(--accent)] to-[#657786] relative" />
 
-      {/* Profile Info */}
-      <div className="px-4 pb-4">
-        <div className="-mt-12 mb-3 flex items-end gap-4">
-          <UserAvatar
-            username={profileUser.username}
-            displayName={profileUser.displayName}
-            avatarUrl={profileUser.avatarUrl}
-            size="xl"
-          />
-          <div className="flex-1" />
-          {isOwnProfile && (
+      {/* Profile Info Section */}
+      <div className="px-4 pb-3 border-b border-[var(--border)]">
+        <div className="-mt-16 mb-3 flex items-end justify-between">
+          <div className="border-4 border-[var(--bg-primary)] rounded-full">
+            <UserAvatar
+              username={profileUser.username}
+              displayName={profileUser.displayName}
+              avatarUrl={profileUser.avatarUrl}
+              size="xl"
+            />
+          </div>
+          {isOwnProfile ? (
             <button
               onClick={() => navigate("settings")}
-              className="px-4 py-1.5 rounded-full border border-[var(--border)] text-sm font-semibold text-[var(--fg)] hover:bg-[var(--hover)] transition-colors"
+              className="px-4 py-1.5 rounded-full border border-[var(--border)] text-[15px] font-bold text-[var(--fg)] hover:bg-[var(--hover)] transition-colors mt-2"
             >
               {t(lang, "profile", "editProfile")}
+            </button>
+          ) : (
+            <button className="px-5 py-1.5 rounded-full bg-[var(--fg)] text-[var(--bg-primary)] text-[15px] font-bold hover:opacity-90 transition-colors mt-2">
+              Follow
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-[var(--fg)]">{profileUser.displayName}</h2>
+        {/* Name + Badge */}
+        <div className="flex items-center gap-1 mb-0.5">
+          <h2 className="text-xl font-extrabold text-[var(--fg)]">{profileUser.displayName}</h2>
           {profileUser.subscribed && <SubscribedBadge size="md" />}
         </div>
 
-        <p className="text-[var(--muted)] text-sm">@{profileUser.username}</p>
+        <p className="text-[15px] text-[var(--muted)]">@{profileUser.username}</p>
 
+        {/* Bio */}
         {profileUser.bio && (
-          <p className="text-[var(--fg)] mt-2 text-[15px]">{profileUser.bio}</p>
+          <p className="text-[15px] text-[var(--fg)] mt-3 whitespace-pre-wrap">
+            {profileUser.bio}
+          </p>
         )}
 
-        <p className="text-[var(--muted)] text-sm mt-2">
-          {t(lang, "profile", "joined")}{" "}
-          {format(new Date(profileUser.createdAt), "MMMM yyyy", { locale })}
-        </p>
+        {/* Meta info */}
+        <div className="flex items-center gap-1 mt-3 text-[15px] text-[var(--muted)]">
+          <CalendarDays className="h-4 w-4" />
+          <span>
+            {t(lang, "profile", "joined")}{" "}
+            {format(new Date(profileUser.createdAt), "MMMM yyyy", { locale })}
+          </span>
+        </div>
       </div>
 
-      {/* Posts */}
-      <div className="border-t border-[var(--border)]">
+      {/* Tabs - Posts / Replies / Likes */}
+      <div className="sticky top-[53px] z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md">
+        <div className="flex">
+          <button
+            onClick={() => setActiveTab("posts")}
+            className={`relative flex-1 py-4 text-[15px] text-center hover:bg-[var(--hover)] transition-colors ${
+              activeTab === "posts" ? "x-tab-active" : "x-tab-inactive"
+            }`}
+          >
+            {t(lang, "profile", "posts")}
+          </button>
+          <button
+            onClick={() => setActiveTab("replies")}
+            className={`relative flex-1 py-4 text-[15px] text-center hover:bg-[var(--hover)] transition-colors ${
+              activeTab === "replies" ? "x-tab-active" : "x-tab-inactive"
+            }`}
+          >
+            {lang === "ru" ? "Ответы" : "Replies"}
+          </button>
+          <button
+            onClick={() => setActiveTab("likes")}
+            className={`relative flex-1 py-4 text-[15px] text-center hover:bg-[var(--hover)] transition-colors ${
+              activeTab === "likes" ? "x-tab-active" : "x-tab-inactive"
+            }`}
+          >
+            {lang === "ru" ? "Нравится" : "Likes"}
+          </button>
+        </div>
+      </div>
+
+      {/* Posts Feed */}
+      <div>
         {posts.length === 0 ? (
-          <div className="p-8 text-center text-[var(--muted)]">
-            {t(lang, "profile", "noPosts")}
+          <div className="p-12 text-center">
+            <h3 className="text-xl font-bold text-[var(--fg)] mb-2">
+              {lang === "ru" ? "Пока ничего нет" : "Nothing yet"}
+            </h3>
+            <p className="text-[15px] text-[var(--muted)]">
+              {activeTab === "posts"
+                ? t(lang, "profile", "noPosts")
+                : lang === "ru"
+                  ? "В этом разделе пока ничего нет."
+                  : "Nothing in this section yet."}
+            </p>
           </div>
         ) : (
           posts.map((post) => (

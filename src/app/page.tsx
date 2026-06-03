@@ -20,11 +20,11 @@ function LoadingScreen() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-black">
       <div className="flex flex-col items-center gap-4">
-        <div className="h-16 w-16 rounded-full bg-[#8639d2] flex items-center justify-center text-white font-bold text-3xl animate-pulse">
+        <div className="h-16 w-16 rounded-full bg-[#1d9bf0] flex items-center justify-center text-white font-bold text-3xl animate-pulse">
           F
         </div>
-        <div className="h-1 w-16 rounded-full bg-[#8639d2]/30 overflow-hidden">
-          <div className="h-full bg-[#8639d2] animate-[loading_1s_ease-in-out_infinite]" />
+        <div className="h-1 w-16 rounded-full bg-[#1d9bf0]/30 overflow-hidden">
+          <div className="h-full bg-[#1d9bf0] animate-[loading_1s_ease-in-out_infinite]" />
         </div>
       </div>
     </div>

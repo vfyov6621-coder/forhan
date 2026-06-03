@@ -11,7 +11,7 @@
   --hover: #f7f9f9;
   --input-bg: #f7f9f9;
   --card: #ffffff;
-  --accent: #8639d2;
+  --accent: #1d9bf0;
 }
 
 .dark {
@@ -20,10 +20,10 @@
   --fg: #e7e9ea;
   --muted: #71767b;
   --border: #2f3336;
-  --hover: #0e0e0e;
+  --hover: #080808;
   --input-bg: #202327;
   --card: #16181c;
-  --accent: #8639d2;
+  --accent: #1d9bf0;
 }
 
 * {
@@ -44,9 +44,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Scrollbar */
+/* Scrollbar - X.com minimal style */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -54,8 +54,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 2px;
+}
+
+:hover::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -122,4 +126,31 @@ body {
 /* Transitions */
 a, button {
   transition: all 0.15s ease-in-out;
+}
+
+/* X.com tab underline style */
+.x-tab-active {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.x-tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+
+.x-tab-inactive {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.x-tab-inactive:hover {
+  background: var(--hover);
 }
