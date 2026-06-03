@@ -25,7 +25,7 @@ export function SettingsPage() {
   const [paymentLink, setPaymentLink] = useState("");
 
   useEffect(() => {
-    fetch("/api/admin/payment-link")
+    fetch("/api/admin/payment-link", { credentials: "include" })
       .then((r) => r.json())
       .then((d) => setPaymentLink(d.link || ""))
       .catch(() => {});
@@ -39,13 +39,7 @@ export function SettingsPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          displayName,
-          bio,
-          theme,
-          accentColor,
-          language,
-        }),
+        body: JSON.stringify({ displayName, bio, theme, accentColor, language }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -57,45 +51,53 @@ export function SettingsPage() {
     setSaving(false);
   };
 
+  const sectionStyle: React.CSSProperties = { borderBottom: `1px solid var(--border)` };
+
   return (
-    <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen">
+    <div className="min-h-screen">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3">
+      <div className="sticky top-0 z-10 px-4 py-3" style={{ backgroundColor: "rgba(0,0,0,0.65)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderBottom: `1px solid var(--border)` }}>
         <div className="flex items-center gap-6">
           <button
             onClick={() => navigate("home")}
-            className="p-1.5 rounded-full hover:bg-[var(--hover)] transition-colors -ml-2"
+            className="p-1.5 rounded-full transition-colors -ml-2"
+            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "var(--hover-secondary)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
           >
-            <svg className="h-5 w-5 text-[var(--fg)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--fg)" }}>
               <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-xl font-bold text-[var(--fg)]">{t(lang, "settings", "title")}</h1>
+          <h1 className="text-xl font-bold" style={{ color: "var(--fg)" }}>{t(lang, "settings", "title")}</h1>
         </div>
       </div>
 
-      <div className="divide-y divide-[var(--border)]">
+      <div>
         {/* Profile Section */}
-        <section className="p-4">
-          <h2 className="text-xl font-bold text-[var(--fg)] mb-4">{t(lang, "settings", "displaySection")}</h2>
-
+        <section className="p-4" style={sectionStyle}>
+          <h2 className="text-xl font-bold mb-4" style={{ color: "var(--fg)" }}>{t(lang, "settings", "displaySection")}</h2>
           <div className="flex flex-col gap-4">
             <div>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-transparent border border-[var(--border)] text-[17px] text-[var(--fg)] focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full px-4 py-3 text-[17px] transition-colors"
+                style={{ backgroundColor: "transparent", color: "var(--fg)", border: `1px solid var(--border)` }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
                 placeholder={t(lang, "settings", "displayName")}
               />
             </div>
-
             <div>
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder={t(lang, "settings", "bioPlaceholder")}
-                className="w-full px-4 py-3 rounded-lg bg-transparent border border-[var(--border)] text-[15px] text-[var(--fg)] focus:outline-none focus:border-[var(--accent)] transition-colors resize-none"
+                className="w-full px-4 py-3 text-[15px] resize-none transition-colors"
+                style={{ backgroundColor: "transparent", color: "var(--fg)", border: `1px solid var(--border)` }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
                 rows={3}
                 maxLength={200}
               />
@@ -104,23 +106,28 @@ export function SettingsPage() {
         </section>
 
         {/* Subscription Section */}
-        <section className="p-4">
-          <h2 className="text-xl font-bold text-[var(--fg)] mb-4">{t(lang, "settings", "subscriptionSection")}</h2>
-
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:bg-[var(--hover)] transition-colors">
+        <section className="p-4" style={sectionStyle}>
+          <h2 className="text-xl font-bold mb-4" style={{ color: "var(--fg)" }}>{t(lang, "settings", "subscriptionSection")}</h2>
+          <div className="flex items-center justify-between p-4 rounded-2xl transition-colors"
+            style={{ border: `1px solid var(--border)` }}
+            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "var(--hover-secondary)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+          >
             <div className="flex items-center gap-3">
-              <Crown className="h-6 w-6 text-[var(--accent)]" />
+              <Crown className="h-6 w-6" style={{ color: "var(--accent)" }} />
               <div>
-                <p className="text-[15px] font-bold text-[var(--fg)]">
+                <p className="text-[15px] font-bold" style={{ color: "var(--fg)" }}>
                   {t(lang, "settings", "subscribedLabel")}
                 </p>
-                <p className="text-[13px] text-[var(--muted)] mt-0.5">
+                <p className="text-[13px] mt-0.5" style={{ color: "var(--muted)" }}>
                   {t(lang, "settings", "subscribedDesc")}
                 </p>
               </div>
             </div>
             {user?.subscribed ? (
-              <span className="px-4 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-[15px] font-bold">
+              <span className="px-4 py-1.5 rounded-full text-[15px] font-bold"
+                style={{ backgroundColor: "var(--accent-light)", color: "var(--accent)" }}
+              >
                 {t(lang, "settings", "subscribedLabel")}
               </span>
             ) : paymentLink ? (
@@ -128,24 +135,24 @@ export function SettingsPage() {
                 href={paymentLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-5 py-2 rounded-full bg-[var(--fg)] text-[var(--bg-primary)] text-[15px] font-bold hover:opacity-90 transition-colors"
+                className="flex items-center gap-2 px-5 py-2 rounded-full text-[15px] font-bold transition-colors"
+                style={{ backgroundColor: "var(--fg)", color: "var(--bg-primary)" }}
               >
                 <ExternalLink className="h-4 w-4" />
                 {lang === "ru" ? "Купить подписку" : "Get Subscription"}
               </a>
             ) : (
-              <span className="text-[15px] text-[var(--muted)]">—</span>
+              <span className="text-[15px]" style={{ color: "var(--muted)" }}>—</span>
             )}
           </div>
         </section>
 
         {/* Appearance Section */}
-        <section className="p-4">
-          <h2 className="text-xl font-bold text-[var(--fg)] mb-4">{t(lang, "settings", "appearanceSection")}</h2>
+        <section className="p-4" style={sectionStyle}>
+          <h2 className="text-xl font-bold mb-4" style={{ color: "var(--fg)" }}>{t(lang, "settings", "appearanceSection")}</h2>
 
-          {/* Theme */}
           <div className="mb-5">
-            <p className="text-[15px] font-bold text-[var(--fg)] mb-2">
+            <p className="text-[15px] font-bold mb-2" style={{ color: "var(--fg)" }}>
               {t(lang, "settings", "theme")}
             </p>
             <div className="flex gap-2">
@@ -153,11 +160,18 @@ export function SettingsPage() {
                 <button
                   key={themeOption}
                   onClick={() => setTheme(themeOption)}
-                  className={`px-5 py-2.5 rounded-full text-[15px] font-bold transition-colors ${
+                  className="px-5 py-2.5 rounded-full text-[15px] font-bold transition-colors"
+                  style={
                     theme === themeOption
-                      ? "bg-[var(--fg)] text-[var(--bg-primary)]"
-                      : "border border-[var(--border)] text-[var(--fg)] hover:bg-[var(--hover)]"
-                  }`}
+                      ? { backgroundColor: "var(--fg)", color: "var(--bg-primary)" }
+                      : { border: `1px solid var(--border)`, color: "var(--fg)" }
+                  }
+                  onMouseOver={(e) => {
+                    if (theme !== themeOption) e.currentTarget.style.backgroundColor = "var(--hover-secondary)";
+                  }}
+                  onMouseOut={(e) => {
+                    if (theme !== themeOption) e.currentTarget.style.backgroundColor = "transparent";
+                  }}
                 >
                   {themeOption === "light" ? t(lang, "settings", "themeLight") : t(lang, "settings", "themeDark")}
                 </button>
@@ -165,9 +179,8 @@ export function SettingsPage() {
             </div>
           </div>
 
-          {/* Accent Color */}
           <div>
-            <p className="text-[15px] font-bold text-[var(--fg)] mb-2">
+            <p className="text-[15px] font-bold mb-2" style={{ color: "var(--fg)" }}>
               {t(lang, "settings", "accentColor")}
             </p>
             <div className="flex gap-2 flex-wrap">
@@ -175,12 +188,11 @@ export function SettingsPage() {
                 <button
                   key={color}
                   onClick={() => setAccentColor(color)}
-                  className={`w-10 h-10 rounded-full transition-transform ${
-                    accentColor === color ? "scale-110 ring-4 ring-offset-2 ring-offset-[var(--bg-primary)]" : "hover:scale-105"
-                  }`}
+                  className="w-10 h-10 rounded-full transition-transform"
                   style={{
                     backgroundColor: color,
-                    ringColor: accentColor === color ? color : undefined,
+                    transform: accentColor === color ? "scale(1.15)" : "scale(1)",
+                    boxShadow: accentColor === color ? `0 0 0 3px var(--bg-primary), 0 0 0 5px ${color}` : "none",
                   }}
                 />
               ))}
@@ -189,19 +201,25 @@ export function SettingsPage() {
         </section>
 
         {/* Language Section */}
-        <section className="p-4">
-          <h2 className="text-xl font-bold text-[var(--fg)] mb-4">{t(lang, "settings", "languageSection")}</h2>
-
+        <section className="p-4" style={sectionStyle}>
+          <h2 className="text-xl font-bold mb-4" style={{ color: "var(--fg)" }}>{t(lang, "settings", "languageSection")}</h2>
           <div className="flex gap-2">
             {["ru", "en"].map((langOption) => (
               <button
                 key={langOption}
                 onClick={() => setLanguage(langOption)}
-                className={`px-5 py-2.5 rounded-full text-[15px] font-bold transition-colors ${
+                className="px-5 py-2.5 rounded-full text-[15px] font-bold transition-colors"
+                style={
                   language === langOption
-                    ? "bg-[var(--fg)] text-[var(--bg-primary)]"
-                    : "border border-[var(--border)] text-[var(--fg)] hover:bg-[var(--hover)]"
-                }`}
+                    ? { backgroundColor: "var(--fg)", color: "var(--bg-primary)" }
+                    : { border: `1px solid var(--border)`, color: "var(--fg)" }
+                }
+                onMouseOver={(e) => {
+                  if (language !== langOption) e.currentTarget.style.backgroundColor = "var(--hover-secondary)";
+                }}
+                onMouseOut={(e) => {
+                  if (language !== langOption) e.currentTarget.style.backgroundColor = "transparent";
+                }}
               >
                 {langOption === "ru" ? t(lang, "settings", "ru") : t(lang, "settings", "en")}
               </button>
@@ -214,7 +232,10 @@ export function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full py-3 rounded-full bg-[var(--accent)] text-white text-[15px] font-bold hover:bg-[#1a8cd8] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 rounded-full text-white text-[15px] font-bold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+            style={{ backgroundColor: saved ? "var(--success)" : "var(--accent)" }}
+            onMouseOver={(e) => { if (!saved) e.currentTarget.style.backgroundColor = "var(--accent-hover)"; }}
+            onMouseOut={(e) => { if (!saved) e.currentTarget.style.backgroundColor = saved ? "var(--success)" : "var(--accent)"; }}
           >
             <Save className="h-[18px] w-[18px]" />
             {saving ? "..." : saved ? t(lang, "settings", "saved") : t(lang, "settings", "save")}

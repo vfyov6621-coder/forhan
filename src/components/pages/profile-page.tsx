@@ -6,7 +6,7 @@ import { t } from "@/lib/translations";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { enUS } from "date-fns/locale";
-import { CalendarDays, MapPin, Link as LinkIcon } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { SubscribedBadge } from "@/components/subscribed-badge";
 import { PostCard } from "@/components/post-card";
@@ -59,7 +59,7 @@ export function ProfilePage() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`/api/users/${username}`);
+        const res = await fetch(`/api/users/${username}`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           setProfileUser(data.user);
@@ -81,20 +81,21 @@ export function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
-        <div className="h-8 w-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
       </div>
     );
   }
 
   if (error || !profileUser) {
     return (
-      <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[var(--muted)] mb-4">{error || t(lang, "errors", "notFound")}</p>
+          <p className="mb-4" style={{ color: "var(--muted)" }}>{error || t(lang, "errors", "notFound")}</p>
           <button
             onClick={() => navigate("home")}
-            className="text-[var(--accent)] hover:underline"
+            className="font-bold"
+            style={{ color: "var(--accent)" }}
           >
             {t(lang, "postDetail", "back")}
           </button>
@@ -104,26 +105,38 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen">
+    <div className="min-h-screen">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-20 bg-[var(--bg-primary)]/80 backdrop-blur-md">
-        <div className="flex items-center gap-6 px-4 py-1 h-[53px]">
-          <div className="flex-1">
-            <h2 className="text-xl font-bold text-[var(--fg)]">{profileUser.displayName}</h2>
-            <p className="text-[13px] text-[var(--muted)]">
+      <div className="sticky top-0 z-20" style={{ backgroundColor: "rgba(0,0,0,0.65)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+        <div className="flex items-center gap-6 px-4 h-[53px]">
+          <button
+            onClick={() => navigate("home")}
+            className="p-1.5 rounded-full transition-colors -ml-2"
+            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "var(--hover-secondary)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--fg)" }}>
+              <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div>
+            <h2 className="text-xl font-bold" style={{ color: "var(--fg)" }}>{profileUser.displayName}</h2>
+            <p className="text-[13px]" style={{ color: "var(--muted)" }}>
               {posts.length} {t(lang, "profile", "posts").toLowerCase()}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Banner - X.com style gradient */}
-      <div className="h-48 sm:h-48 bg-gradient-to-br from-[var(--accent)] to-[#657786] relative" />
+      {/* Banner - X.com style */}
+      <div className="h-[200px] relative" style={{
+        background: "linear-gradient(135deg, var(--accent), #657786)",
+      }} />
 
-      {/* Profile Info Section */}
-      <div className="px-4 pb-3 border-b border-[var(--border)]">
+      {/* Profile Info */}
+      <div className="px-4 pb-3" style={{ borderBottom: `1px solid var(--border)` }}>
         <div className="-mt-16 mb-3 flex items-end justify-between">
-          <div className="border-4 border-[var(--bg-primary)] rounded-full">
+          <div className="rounded-full" style={{ border: `4px solid var(--bg-primary)` }}>
             <UserAvatar
               username={profileUser.username}
               displayName={profileUser.displayName}
@@ -134,12 +147,20 @@ export function ProfilePage() {
           {isOwnProfile ? (
             <button
               onClick={() => navigate("settings")}
-              className="px-4 py-1.5 rounded-full border border-[var(--border)] text-[15px] font-bold text-[var(--fg)] hover:bg-[var(--hover)] transition-colors mt-2"
+              className="px-4 py-1.5 rounded-full text-[15px] font-bold transition-colors mt-2"
+              style={{ border: `1px solid var(--border)`, color: "var(--fg)" }}
+              onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "var(--hover-secondary)"; }}
+              onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
             >
               {t(lang, "profile", "editProfile")}
             </button>
           ) : (
-            <button className="px-5 py-1.5 rounded-full bg-[var(--fg)] text-[var(--bg-primary)] text-[15px] font-bold hover:opacity-90 transition-colors mt-2">
+            <button
+              className="px-5 py-1.5 rounded-full text-[15px] font-bold transition-colors mt-2"
+              style={{ backgroundColor: "var(--fg)", color: "var(--bg-primary)" }}
+              onMouseOver={(e) => { e.currentTarget.style.opacity = "0.9"; }}
+              onMouseOut={(e) => { e.currentTarget.style.opacity = "1"; }}
+            >
               Follow
             </button>
           )}
@@ -147,22 +168,22 @@ export function ProfilePage() {
 
         {/* Name + Badge */}
         <div className="flex items-center gap-1 mb-0.5">
-          <h2 className="text-xl font-extrabold text-[var(--fg)]">{profileUser.displayName}</h2>
+          <h2 className="text-xl font-extrabold" style={{ color: "var(--fg)" }}>{profileUser.displayName}</h2>
           {profileUser.subscribed && <SubscribedBadge size="md" />}
         </div>
 
-        <p className="text-[15px] text-[var(--muted)]">@{profileUser.username}</p>
+        <p className="text-[15px]" style={{ color: "var(--muted)" }}>@{profileUser.username}</p>
 
         {/* Bio */}
         {profileUser.bio && (
-          <p className="text-[15px] text-[var(--fg)] mt-3 whitespace-pre-wrap">
+          <p className="text-[15px] mt-3 whitespace-pre-wrap" style={{ color: "var(--fg)" }}>
             {profileUser.bio}
           </p>
         )}
 
         {/* Meta info */}
-        <div className="flex items-center gap-1 mt-3 text-[15px] text-[var(--muted)]">
-          <CalendarDays className="h-4 w-4" />
+        <div className="flex items-center gap-1 mt-3 text-[15px]" style={{ color: "var(--muted)" }}>
+          <CalendarDays className="h-[18px] w-[18px]" />
           <span>
             {t(lang, "profile", "joined")}{" "}
             {format(new Date(profileUser.createdAt), "MMMM yyyy", { locale })}
@@ -170,44 +191,38 @@ export function ProfilePage() {
         </div>
       </div>
 
-      {/* Tabs - Posts / Replies / Likes */}
-      <div className="sticky top-[53px] z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md">
-        <div className="flex">
+      {/* Tabs */}
+      <div className="sticky top-[53px] z-10" style={{ backgroundColor: "rgba(0,0,0,0.65)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+        <div className="flex" style={{ borderTop: `1px solid var(--border)` }}>
           <button
             onClick={() => setActiveTab("posts")}
-            className={`relative flex-1 py-4 text-[15px] text-center hover:bg-[var(--hover)] transition-colors ${
-              activeTab === "posts" ? "x-tab-active" : "x-tab-inactive"
-            }`}
+            className={`x-tab ${activeTab === "posts" ? "x-tab-active" : ""}`}
           >
             {t(lang, "profile", "posts")}
           </button>
           <button
             onClick={() => setActiveTab("replies")}
-            className={`relative flex-1 py-4 text-[15px] text-center hover:bg-[var(--hover)] transition-colors ${
-              activeTab === "replies" ? "x-tab-active" : "x-tab-inactive"
-            }`}
+            className={`x-tab ${activeTab === "replies" ? "x-tab-active" : ""}`}
           >
             {lang === "ru" ? "Ответы" : "Replies"}
           </button>
           <button
             onClick={() => setActiveTab("likes")}
-            className={`relative flex-1 py-4 text-[15px] text-center hover:bg-[var(--hover)] transition-colors ${
-              activeTab === "likes" ? "x-tab-active" : "x-tab-inactive"
-            }`}
+            className={`x-tab ${activeTab === "likes" ? "x-tab-active" : ""}`}
           >
             {lang === "ru" ? "Нравится" : "Likes"}
           </button>
         </div>
       </div>
 
-      {/* Posts Feed */}
+      {/* Posts */}
       <div>
         {posts.length === 0 ? (
           <div className="p-12 text-center">
-            <h3 className="text-xl font-bold text-[var(--fg)] mb-2">
+            <h3 className="text-xl font-bold mb-2" style={{ color: "var(--fg)" }}>
               {lang === "ru" ? "Пока ничего нет" : "Nothing yet"}
             </h3>
-            <p className="text-[15px] text-[var(--muted)]">
+            <p className="text-[15px]" style={{ color: "var(--muted)" }}>
               {activeTab === "posts"
                 ? t(lang, "profile", "noPosts")
                 : lang === "ru"

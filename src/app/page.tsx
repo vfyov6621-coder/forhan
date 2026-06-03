@@ -14,17 +14,15 @@ import { SettingsPage } from "@/components/pages/settings-page";
 import { SearchPage } from "@/components/pages/search-page";
 import { PostDetailPage } from "@/components/pages/post-detail-page";
 import { AdminPage } from "@/components/pages/admin-page";
-import type { UserState } from "@/store";
 
 function LoadingScreen() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
+    <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: "var(--bg-primary)" }}>
       <div className="flex flex-col items-center gap-4">
-        <div className="h-16 w-16 rounded-full bg-[#1d9bf0] flex items-center justify-center text-white font-bold text-3xl animate-pulse">
-          F
-        </div>
-        <div className="h-1 w-16 rounded-full bg-[#1d9bf0]/30 overflow-hidden">
-          <div className="h-full bg-[#1d9bf0] animate-[loading_1s_ease-in-out_infinite]" />
+        <div className="h-12 w-12 flex items-center justify-center" style={{ color: "var(--fg)" }}>
+          <svg viewBox="0 0 24 24" className="h-full w-full" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
         </div>
       </div>
     </div>
@@ -87,9 +85,9 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "var(--bg-primary)" }}>
         <LeftSidebar />
-        <main className="flex-1 overflow-y-auto pb-14 lg:pb-0">
+        <main className="flex-1 min-w-0 max-w-[600px] mx-auto lg:mx-0 xl:max-w-none overflow-y-auto pb-14 lg:pb-0" style={{ borderLeft: "1px solid var(--border)", borderRight: "1px solid var(--border)" }}>
           {renderView()}
         </main>
         <RightPanel />

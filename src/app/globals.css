@@ -2,28 +2,49 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ===== X.com Dark Theme Colors ===== */
 :root {
   --bg-primary: #ffffff;
   --bg-secondary: #f7f9f9;
   --fg: #0f1419;
+  --fg-secondary: #536471;
   --muted: #536471;
   --border: #eff3f4;
+  --border-light: #eff3f4;
   --hover: #f7f9f9;
+  --hover-secondary: #f4f5f5;
   --input-bg: #f7f9f9;
   --card: #ffffff;
   --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
+  --accent-light: rgba(29, 155, 240, 0.1);
+  --danger: #f4212e;
+  --success: #00ba7c;
+  --like-color: #f91880;
+  --repost-color: #00ba7c;
+  --divider: #eff3f4;
 }
 
 .dark {
   --bg-primary: #000000;
-  --bg-secondary: #000000;
+  --bg-secondary: #16181c;
   --fg: #e7e9ea;
+  --fg-secondary: #71767b;
   --muted: #71767b;
   --border: #2f3336;
+  --border-light: #2f3336;
   --hover: #080808;
+  --hover-secondary: #16181c;
   --input-bg: #202327;
   --card: #16181c;
   --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
+  --accent-light: rgba(29, 155, 240, 0.1);
+  --danger: #f4212e;
+  --success: #00ba7c;
+  --like-color: #f91880;
+  --repost-color: #00ba7c;
+  --divider: #2f3336;
 }
 
 * {
@@ -42,10 +63,16 @@ body {
   color: var(--fg);
   min-height: 100vh;
   overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.25;
 }
 
-/* Scrollbar - X.com minimal style */
+/* ===== X.com Minimal Scrollbar ===== */
 ::-webkit-scrollbar {
+  width: 0px;
+}
+
+*:hover::-webkit-scrollbar {
   width: 4px;
 }
 
@@ -66,7 +93,17 @@ body {
   background: var(--muted);
 }
 
-/* Shimmer animation for subscribed badge */
+/* Firefox scrollbar */
+* {
+  scrollbar-width: none;
+}
+
+*:hover {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ===== Shimmer animation for subscribed badge ===== */
 @keyframes shimmer-sub {
   0% {
     background-position: -200% 0;
@@ -76,7 +113,137 @@ body {
   }
 }
 
-/* Toast animation */
+/* ===== Loading spinner ===== */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ===== Focus styles ===== */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ===== Selection ===== */
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+/* ===== Transitions ===== */
+a, button {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* ===== X.com Tab Underline ===== */
+.x-tab {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 53px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.x-tab:hover {
+  background-color: var(--hover);
+}
+
+.x-tab-active {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.x-tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+
+/* ===== X.com Sidebar Nav Item ===== */
+.x-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px;
+  border-radius: 9999px;
+  font-size: 20px;
+  color: var(--fg);
+  transition: background-color 0.2s;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.x-nav-item:hover {
+  background-color: var(--hover-secondary);
+}
+
+.x-nav-item-active {
+  font-weight: 700;
+}
+
+/* ===== Post action button hover areas ===== */
+.post-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  max-width: 36px;
+  max-height: 36px;
+  padding: 0;
+  border-radius: 9999px;
+  transition: background-color 0.2s, color 0.2s;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.post-action:hover {
+  background-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.post-action-like:hover {
+  background-color: rgba(249, 24, 128, 0.1);
+  color: var(--like-color);
+}
+
+.post-action-repost:hover {
+  background-color: rgba(0, 186, 124, 0.1);
+  color: var(--repost-color);
+}
+
+/* ===== Textarea auto-resize ===== */
+textarea {
+  field-sizing: content;
+}
+
+/* ===== Smooth font rendering ===== */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Toast animation ===== */
 @keyframes toast-in {
   from {
     opacity: 0;
@@ -97,60 +264,4 @@ body {
     opacity: 0;
     transform: translateY(-20px);
   }
-}
-
-/* Loading spinner */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* Focus styles */
-*:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Selection */
-::selection {
-  background: var(--accent);
-  color: white;
-}
-
-/* Transitions */
-a, button {
-  transition: all 0.15s ease-in-out;
-}
-
-/* X.com tab underline style */
-.x-tab-active {
-  color: var(--fg);
-  font-weight: 700;
-}
-
-.x-tab-active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 56px;
-  height: 4px;
-  border-radius: 9999px;
-  background: var(--accent);
-}
-
-.x-tab-inactive {
-  color: var(--muted);
-  font-weight: 500;
-}
-
-.x-tab-inactive:hover {
-  background: var(--hover);
 }

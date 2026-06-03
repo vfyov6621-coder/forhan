@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@/store";
 import { t } from "@/lib/translations";
 import { Search as SearchIcon } from "lucide-react";
@@ -30,7 +30,7 @@ export function SearchPage() {
     setSearching(true);
     setSearched(true);
     try {
-      const res = await fetch(`/api/users?q=${encodeURIComponent(searchQuery.trim())}`);
+      const res = await fetch(`/api/users?q=${encodeURIComponent(searchQuery.trim())}`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         setResults(data.users || []);
@@ -44,17 +44,24 @@ export function SearchPage() {
   }, []);
 
   return (
-    <div className="max-w-[600px] mx-auto border-x border-[var(--border)] min-h-screen">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-10 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border)] px-4 py-3">
+    <div className="min-h-screen">
+      {/* Header with search */}
+      <div className="sticky top-0 z-10 px-4 py-3" style={{ backgroundColor: "rgba(0,0,0,0.65)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
         <div className="relative">
-          <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[var(--muted)]" />
+          <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px]" style={{ color: "var(--fg-secondary)" }} />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t(lang, "search", "placeholder")}
-            className="w-full pl-12 pr-4 py-3 rounded-full bg-[var(--input-bg)] border border-transparent text-[15px] text-[var(--fg)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] focus:bg-white dark:focus:bg-black transition-all duration-200"
+            className="w-full pl-12 pr-4 py-3 rounded-full text-[15px] transition-all duration-200"
+            style={{
+              backgroundColor: "var(--input-bg)",
+              color: "var(--fg)",
+              border: "1px solid transparent",
+            }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = "var(--accent)"; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = "transparent"; }}
             autoFocus
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSearch();
@@ -67,32 +74,36 @@ export function SearchPage() {
       <div>
         {searching ? (
           <div className="py-12 flex justify-center">
-            <div className="h-6 w-6 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+            <div className="h-6 w-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
           </div>
         ) : searched && results.length === 0 ? (
           <div className="py-12 text-center">
-            <h3 className="text-xl font-bold text-[var(--fg)] mb-2">
+            <h3 className="text-xl font-bold mb-2" style={{ color: "var(--fg)" }}>
               {lang === "ru" ? "Ничего не найдено" : "No results found"}
             </h3>
-            <p className="text-[15px] text-[var(--muted)]">{t(lang, "search", "noResults")}</p>
+            <p className="text-[15px]" style={{ color: "var(--muted)" }}>{t(lang, "search", "noResults")}</p>
           </div>
         ) : (
           results.map((u) => (
             <button
               key={u.id}
               onClick={() => navigate("profile", { username: u.username })}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[var(--hover)] transition-colors text-left border-b border-[var(--border)]"
+              className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors"
+              style={{ borderBottom: `1px solid var(--border)` }}
+              onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "var(--hover-secondary)"; }}
+              onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
             >
               <UserAvatar username={u.username} displayName={u.displayName} avatarUrl={u.avatarUrl} size="lg" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1">
-                  <span className="font-bold text-[15px] text-[var(--fg)] truncate">{u.displayName}</span>
+                  <span className="font-bold text-[15px] truncate" style={{ color: "var(--fg)" }}>{u.displayName}</span>
                   {u.subscribed && <SubscribedBadge size="sm" />}
                 </div>
-                <span className="text-[15px] text-[var(--muted)]">@{u.username}</span>
+                <span className="text-[15px]" style={{ color: "var(--muted)" }}>@{u.username}</span>
               </div>
               <button
-                className="px-4 py-1.5 rounded-full bg-[var(--fg)] text-[var(--bg-primary)] font-bold text-[14px] hover:opacity-90 transition-colors flex-shrink-0"
+                className="px-4 py-1.5 rounded-full font-bold text-[14px] flex-shrink-0 transition-colors"
+                style={{ backgroundColor: "var(--fg)", color: "var(--bg-primary)" }}
                 onClick={(e) => e.stopPropagation()}
               >
                 {lang === "ru" ? "Читать" : "Follow"}
