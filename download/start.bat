@@ -24,7 +24,7 @@ node -v
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [1/6] Installing dependencies...
+echo  [1/7] Installing dependencies...
 echo  ─────────────────────────────────────────────────
 call npm install
 if %errorlevel% neq 0 (
@@ -37,14 +37,14 @@ echo  [√] Dependencies installed
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [2/6] Creating database folder...
+echo  [2/7] Creating database folder...
 echo  ─────────────────────────────────────────────────
 if not exist "db" mkdir db
 echo  [√] Folder db/ ready
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [3/6] Setting up .env...
+echo  [3/7] Setting up .env...
 echo  ─────────────────────────────────────────────────
 if not exist ".env" (
     echo DATABASE_URL=file:./db/custom.db> .env
@@ -56,7 +56,7 @@ if not exist ".env" (
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [4/6] Fixing .env conflicts...
+echo  [4/7] Fixing .env conflicts...
 echo  ─────────────────────────────────────────────────
 set PARENT_ENV_MOVED=0
 if exist "..\.env" (
@@ -69,7 +69,7 @@ if exist "..\.env" (
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [5/6] Creating database...
+echo  [5/7] Creating database...
 echo  ─────────────────────────────────────────────────
 
 :: Delete old database if exists (clean schema push)
@@ -102,7 +102,19 @@ if %PARENT_ENV_MOVED% equ 1 (
 
 echo.
 echo  ─────────────────────────────────────────────────
-echo  [6/6] Starting Forhan server...
+echo  [6/7] Setting up admin account...
+echo  ─────────────────────────────────────────────────
+echo  [i] To create admin account, after server starts:
+echo      Go to http://localhost:3000 and register an account.
+echo      Then run this command in another terminal:
+echo      curl -X POST http://localhost:3000/api/admin/seed ^
+echo        -H "Content-Type: application/json" ^
+echo        -d "{\"username\":\"YOUR_USERNAME\",\"password\":\"YOUR_PASSWORD\"}"
+echo  [√] See instructions above
+echo.
+
+echo  ─────────────────────────────────────────────────
+echo  [7/7] Starting Forhan server...
 echo  ─────────────────────────────────────────────────
 echo.
 echo  ╔══════════════════════════════════════════════╗

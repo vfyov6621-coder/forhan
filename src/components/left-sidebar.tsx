@@ -2,7 +2,7 @@
 
 import { useStore } from "@/store";
 import { t } from "@/lib/translations";
-import { Home, Search, User, Settings, LogOut, Menu } from "lucide-react";
+import { Home, Search, User, Settings, LogOut, Menu, Shield } from "lucide-react";
 import { UserAvatar } from "./user-avatar";
 import { SubscribedBadge } from "./subscribed-badge";
 
@@ -20,6 +20,11 @@ export function LeftSidebar() {
       { id: "profile", icon: User, label: t(lang, "nav", "profile") },
       { id: "settings", icon: Settings, label: t(lang, "nav", "settings") }
     );
+    if (user.isAdmin) {
+      navItems.push(
+        { id: "admin", icon: Shield, label: t(lang, "nav", "admin") }
+      );
+    }
   }
 
   return (

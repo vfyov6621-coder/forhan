@@ -26,6 +26,7 @@ export async function GET() {
         avatarUrl: user.avatarUrl,
         bio: user.bio,
         subscribed: user.subscribed,
+        isAdmin: user.isAdmin,
         theme: user.theme,
         accentColor: user.accentColor,
         language: user.language,

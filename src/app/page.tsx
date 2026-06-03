@@ -13,6 +13,7 @@ import { ProfilePage } from "@/components/pages/profile-page";
 import { SettingsPage } from "@/components/pages/settings-page";
 import { SearchPage } from "@/components/pages/search-page";
 import { PostDetailPage } from "@/components/pages/post-detail-page";
+import { AdminPage } from "@/components/pages/admin-page";
 import type { UserState } from "@/store";
 
 function LoadingScreen() {
@@ -73,6 +74,8 @@ export default function App() {
         return <ProfilePage />;
       case "settings":
         return <SettingsPage />;
+      case "admin":
+        return <AdminPage />;
       case "search":
         return <SearchPage />;
       case "post":

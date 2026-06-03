@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    if (username.length < 2 || username.length > 30) {
-      return NextResponse.json({ error: "Username must be 2-30 characters" }, { status: 400 });
+    if (username.length < 1 || username.length > 30) {
+      return NextResponse.json({ error: "Username must be 1-30 characters" }, { status: 400 });
     }
 
     const existing = await db.user.findUnique({ where: { username } });
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     session.userId = user.id;
     session.username = user.username;
     session.isLoggedIn = true;
+    session.isAdmin = user.isAdmin;
     await session.save();
 
     return NextResponse.json({
@@ -49,6 +50,7 @@ export async function POST(req: NextRequest) {
         avatarUrl: user.avatarUrl,
         bio: user.bio,
         subscribed: user.subscribed,
+        isAdmin: user.isAdmin,
         theme: user.theme,
         accentColor: user.accentColor,
         language: user.language,

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useStore } from "@/store";
 import { t } from "@/lib/translations";
-import { Save } from "lucide-react";
+import { Save, Crown, ExternalLink } from "lucide-react";
 
 const accentColors = [
   "#8639d2", "#e11d48", "#ea580c", "#d97706",
@@ -20,24 +20,31 @@ export function SettingsPage() {
   const [theme, setTheme] = useState(user?.theme || "dark");
   const [accentColor, setAccentColor] = useState(user?.accentColor || "#8639d2");
   const [language, setLanguage] = useState(user?.language || "ru");
-  const [subscribed, setSubscribed] = useState(user?.subscribed || false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [paymentLink, setPaymentLink] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/payment-link")
+      .then((r) => r.json())
+      .then((d) => setPaymentLink(d.link || ""))
+      .catch(() => {});
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
     setSaved(false);
     try {
-      const res = await fetch("/api/users/profile", {
+      const res = await fetch("/api/users", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           displayName,
           bio,
           theme,
           accentColor,
           language,
-          subscribed,
         }),
       });
       if (res.ok) {
@@ -94,26 +101,34 @@ export function SettingsPage() {
           <h2 className="font-semibold text-[var(--fg)]">{t(lang, "settings", "subscriptionSection")}</h2>
 
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[var(--fg)]">
-                {t(lang, "settings", "subscribedLabel")}
-              </p>
-              <p className="text-xs text-[var(--muted)] mt-0.5">
-                {t(lang, "settings", "subscribedDesc")}
-              </p>
+            <div className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-[var(--accent)]" />
+              <div>
+                <p className="text-sm font-medium text-[var(--fg)]">
+                  {t(lang, "settings", "subscribedLabel")}
+                </p>
+                <p className="text-xs text-[var(--muted)] mt-0.5">
+                  {t(lang, "settings", "subscribedDesc")}
+                </p>
+              </div>
             </div>
-            <button
-              onClick={() => setSubscribed(!subscribed)}
-              className={`relative w-11 h-6 rounded-full transition-colors ${
-                subscribed ? "bg-[var(--accent)]" : "bg-[var(--border)]"
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                  subscribed ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </button>
+            {user?.subscribed ? (
+              <span className="px-3 py-1.5 rounded-full bg-[var(--accent)]/20 text-[var(--accent)] text-sm font-medium">
+                {t(lang, "settings", "subscribedLabel")}
+              </span>
+            ) : paymentLink ? (
+              <a
+                href={paymentLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90 transition-colors"
+              >
+                <ExternalLink className="h-4 w-4" />
+                {lang === "ru" ? "Купить подписку" : "Get Subscription"}
+              </a>
+            ) : (
+              <span className="text-sm text-[var(--muted)]">—</span>
+            )}
           </div>
         </section>
 

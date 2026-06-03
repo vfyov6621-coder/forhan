@@ -17,8 +17,10 @@ model User {
   subscribed   Boolean  @default(false)
   theme        String   @default("dark")
   accentColor  String   @default("#8639d2")
+  isAdmin      Boolean  @default(false)
   language     String   @default("ru")
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   posts        Post[]
   comments     Comment[]
   likes        Like[]

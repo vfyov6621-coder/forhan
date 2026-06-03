@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { displayName, bio, theme, accentColor, language, subscribed } = body;
+    const { displayName, bio, theme, accentColor, language, subscribed, isAdmin } = body;
 
     const user = await db.user.update({
       where: { id: session.userId },
@@ -67,6 +67,7 @@ export async function PUT(req: NextRequest) {
         avatarUrl: user.avatarUrl,
         bio: user.bio,
         subscribed: user.subscribed,
+        isAdmin: user.isAdmin,
         theme: user.theme,
         accentColor: user.accentColor,
         language: user.language,

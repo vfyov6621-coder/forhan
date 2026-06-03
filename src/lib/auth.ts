@@ -5,6 +5,7 @@ export interface SessionData {
   userId: string | null;
   username: string | null;
   isLoggedIn: boolean;
+  isAdmin: boolean;
 }
 
 export const sessionOptions = {

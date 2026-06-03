@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     session.userId = user.id;
     session.username = user.username;
     session.isLoggedIn = true;
+    session.isAdmin = user.isAdmin;
     await session.save();
 
     return NextResponse.json({
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
         avatarUrl: user.avatarUrl,
         bio: user.bio,
         subscribed: user.subscribed,
+        isAdmin: user.isAdmin,
         theme: user.theme,
         accentColor: user.accentColor,
         language: user.language,

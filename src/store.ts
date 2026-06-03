@@ -8,6 +8,7 @@ export interface UserState {
   avatarUrl: string | null;
   bio: string | null;
   subscribed: boolean;
+  isAdmin: boolean;
   theme: string;
   accentColor: string;
   language: Lang;
